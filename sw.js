@@ -6,13 +6,16 @@ const FILES = [
   "./index.html",
   "./logo.png",
   "./manifest.webmanifest",
-  "./icons/icon-192.png",
-  "./icons/icon-512.png",
-  "./icons/maskable-512.png",
+  "./icon-192.png",
+  "./icon-512.png",
+  "./maskable-512.png",
 ];
 
 self.addEventListener("install", e => {
-  e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
+  // Cache each file separately so one missing file can't block installation.
+  e.waitUntil(caches.open(VERSION)
+    .then(c => Promise.allSettled(FILES.map(f => c.add(f))))
+    .then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", e => {
