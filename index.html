@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Deli Onboarding Hub</title>
 <link rel="icon" href="logo.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="theme-color" content="#df0244">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Deli Hub">
 <meta name="description" content="Everything a new Deli Stationery Field Force member needs: tutorials, reports, report guides, documents and social channels.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -648,6 +654,11 @@ document.querySelectorAll("[data-section]").forEach(s => obs.observe(s));
     setTimeout(tick, delay);
   })();
 })();
+
+/* ---------- Installable app (PWA) ---------- */
+if ("serviceWorker" in navigator) {
+  addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+}
 
 /* ---------- Theme toggle ---------- */
 const root = document.documentElement;
