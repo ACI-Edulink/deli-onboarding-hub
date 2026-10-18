@@ -1,6 +1,6 @@
 // Service worker: lets the app open offline and load fast.
 // Bump VERSION whenever you upload changes so phones pick up the new files.
-const VERSION = "deli-hub-v1";
+const VERSION = "deli-hub-v3";
 const FILES = [
   "./",
   "./index.html",

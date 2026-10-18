@@ -14,7 +14,7 @@
 <meta name="description" content="Everything a new Deli Stationery Field Force member needs: tutorials, reports, report guides, documents and social channels.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700&display=swap" rel="stylesheet">
 <style>
   /* ============ DESIGN TOKENS (change brand colors here) ============ */
   :root {
@@ -281,7 +281,30 @@
   .empty { padding: 28px; text-align: center; color: var(--muted); border: 1px dashed var(--line); border-radius: var(--radius); }
   .hidden { display: none !important; }
 
-  footer { text-align: center; color: var(--muted); font-size: 13px; padding: 30px 16px 40px; border-top: 1px solid var(--line); }
+  footer { text-align: center; color: var(--muted); font-size: 13px; padding: 30px 16px 40px; border-top: 1px solid var(--line); line-height: 1.8; }
+  footer .credit { color: var(--brand); font-family: "Sora", sans-serif; font-weight: 700; }
+
+  /* "Brought to you by" badge in the hero */
+  .credit-badge {
+    display: inline-flex; align-items: center; gap: 7px; margin-top: 14px;
+    padding: 0;
+    animation-delay: .3s;
+  }
+  .credit-ico {
+    width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; color: #fff;
+    background: linear-gradient(135deg, var(--brand), #ff6a3d); position: relative;
+  }
+  .credit-ico::after {
+    content: ""; position: absolute; inset: -4px; border-radius: 50%;
+    border: 2px solid var(--brand); opacity: 0; animation: pulse 2.4s ease-out infinite;
+  }
+  @keyframes pulse { 0% { transform: scale(.85); opacity: .6; } 100% { transform: scale(1.35); opacity: 0; } }
+  .credit-badge small { display: block; font-size: 9.5px; font-weight: 500; letter-spacing: .01em; color: var(--muted); line-height: 1.2; }
+  .credit-badge b {
+    display: block; font-family: "Sora", sans-serif; font-size: 11.5px; font-weight: 700; letter-spacing: -.01em; line-height: 1.3;
+    background: linear-gradient(90deg, var(--brand), #ff6a3d); -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  @media (prefers-reduced-motion: reduce) { .credit-ico::after { animation: none; } }
 
   /* ============ MOBILE ============ */
   .mobnav { display: none; }
@@ -342,6 +365,12 @@
           <a class="btn btn-primary" href="#journey">Start onboarding →</a>
           <a class="btn btn-ghost" href="#tutorials">Watch tutorials</a>
         </div>
+        <div class="credit-badge rise">
+          <span class="credit-ico" aria-hidden="true">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.9 5.6L19.5 9.5l-5.6 1.9L12 17l-1.9-5.6L4.5 9.5l5.6-1.9z"/><path d="M19 14l.9 2.6 2.6.9-2.6.9L19 21l-.9-2.6-2.6-.9 2.6-.9z" opacity=".75"/></svg>
+          </span>
+          <span><small>brought to you by</small><b>SPT Department</b></span>
+        </div>
       </div>
       <div class="progress-card">
         <div class="ring">
@@ -362,8 +391,8 @@
 </div>
 
 <footer>
-  Deli Stationery · Field Force Onboarding Hub · <span id="updated"></span><br>
-  Something missing or a broken link? Tell your Area Manager.
+  <span id="updated"></span><br>
+  Brought to you by <b class="credit">✦ SPT Department</b>
 </footer>
 
 <script>
