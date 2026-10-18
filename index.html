@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deli Onboarding Hub</title>
+<link rel="icon" href="logo.png">
+<meta name="description" content="Everything a new Deli Stationery Field Force member needs: tutorials, reports, report guides, documents and social channels.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ============ DESIGN TOKENS (change brand colors here) ============ */
+  :root {
+    --brand: #e0004d;          /* Deli red (from logo) */
+    --brand-ink: #ffffff;
+    --brand-soft: #fde6ee;
+    --accent: #1f4fd8;         /* secondary blue */
+    --accent-soft: #e9efff;
+    --ok: #12805c;
+    --ok-soft: #e3f5ee;
+    --warn: #a35b00;
+    --warn-soft: #fff3e0;
+
+    --bg: #f6f6f4;
+    --surface: #ffffff;
+    --surface-2: #f1f1ee;
+    --text: #1b1b1f;
+    --muted: #63636b;
+    --line: #e4e4df;
+    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 6px 20px rgba(0,0,0,.05);
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --brand: #ff4b52; --brand-ink:#1a0001; --brand-soft:#3a1416;
+      --accent:#7d9cff; --accent-soft:#1a2340;
+      --ok:#4fd1a1; --ok-soft:#0f2e24; --warn:#ffb454; --warn-soft:#33240f;
+      --bg:#111113; --surface:#19191c; --surface-2:#222226; --text:#ececef;
+      --muted:#9c9ca6; --line:#2c2c31; --shadow:0 1px 2px rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="dark"] {
+    --brand: #ff4b52; --brand-ink:#1a0001; --brand-soft:#3a1416;
+    --accent:#7d9cff; --accent-soft:#1a2340;
+    --ok:#4fd1a1; --ok-soft:#0f2e24; --warn:#ffb454; --warn-soft:#33240f;
+    --bg:#111113; --surface:#19191c; --surface-2:#222226; --text:#ececef;
+    --muted:#9c9ca6; --line:#2c2c31; --shadow:0 1px 2px rgba(0,0,0,.4);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 15px/1.55 "Plus Jakarta Sans", system-ui, -apple-system, Segoe UI, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  svg { flex-shrink: 0; }
+
+  /* ============ TOP BAR ============ */
+  .topbar {
+    position: sticky; top: 0; z-index: 20;
+    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    backdrop-filter: blur(10px); border-bottom: 1px solid var(--line);
+  }
+  .topbar-in {
+    max-width: 1240px; margin: 0 auto; padding: 12px 16px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 800; letter-spacing: -.01em; }
+  .logo-mark {
+    width: 40px; height: 40px; border-radius: 8px; display: block; object-fit: cover;
+  }
+  .logo small { display: block; font-weight: 500; color: var(--muted); font-size: 12px; margin-top: -2px; }
+  .search {
+    flex: 1; max-width: 460px; margin-left: auto; position: relative;
+  }
+  .search input {
+    width: 100%; padding: 10px 14px 10px 38px; border-radius: 999px;
+    border: 1px solid var(--line); background: var(--surface-2); color: var(--text); font: inherit;
+  }
+  .search input:focus { outline: none; border-color: var(--accent); background: var(--surface); }
+  .search svg { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+  .icon-btn {
+    width: 40px; height: 40px; border-radius: 999px; border: 1px solid var(--line);
+    background: var(--surface); display: grid; place-items: center;
+  }
+
+  /* ============ LAYOUT ============ */
+  .shell { max-width: 1240px; margin: 0 auto; padding: 24px 16px 80px; display: grid; grid-template-columns: 220px 1fr; gap: 32px; }
+  .sidenav { position: sticky; top: 88px; align-self: start; display: flex; flex-direction: column; gap: 2px; }
+  .sidenav a {
+    display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: var(--radius-sm);
+    text-decoration: none; color: var(--muted); font-weight: 600; font-size: 14px;
+  }
+  .sidenav a:hover { background: var(--surface-2); color: var(--text); }
+  .sidenav a.active { background: var(--brand-soft); color: var(--brand); }
+  .sidenav .count { margin-left: auto; font-size: 12px; font-weight: 600; color: var(--muted); }
+  .sidenav .help {
+    margin-top: 18px; padding: 14px; border-radius: var(--radius); background: var(--surface);
+    border: 1px solid var(--line); font-size: 13px; color: var(--muted);
+  }
+  .sidenav .help b { color: var(--text); display: block; margin-bottom: 4px; }
+  .sidenav .help a { display: block; color: var(--brand); font-weight: 600; text-decoration: none; margin-top: 4px; white-space: nowrap; font-size: 12.5px; }
+  .sidenav .help a:hover { text-decoration: underline; }
+  main { min-width: 0; }
+
+  /* ============ HERO ============ */
+  .hero {
+    display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 22px;
+    padding: 32px; box-shadow: var(--shadow); position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ""; position: absolute; right: -80px; top: -80px; width: 280px; height: 280px;
+    border-radius: 50%; background: var(--brand-soft); z-index: 0;
+  }
+  .hero > * { position: relative; z-index: 1; }
+  .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--brand); }
+  .hero h1 { font-size: clamp(26px, 4vw, 38px); line-height: 1.15; letter-spacing: -.02em; margin: 8px 0 10px; }
+  .hero p { color: var(--muted); margin: 0 0 20px; max-width: 560px; }
+
+  /* Animated hero heading */
+  .shine {
+    background: linear-gradient(90deg, var(--brand), #ff6a3d, var(--accent), var(--brand));
+    background-size: 300% 100%;
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: shine 6s linear infinite;
+  }
+  @keyframes shine { to { background-position: 300% 0; } }
+  .wave { display: inline-block; transform-origin: 70% 70%; animation: wave 2.4s ease-in-out infinite; }
+  @keyframes wave {
+    0%, 60%, 100% { transform: rotate(0); }
+    10%, 30% { transform: rotate(14deg); }
+    20% { transform: rotate(-8deg); }
+    40% { transform: rotate(-4deg); }
+    50% { transform: rotate(10deg); }
+  }
+  .rise { animation: rise .7s cubic-bezier(.2,.7,.2,1) both; }
+  .typer.rise { animation-delay: .15s; }
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+  .typer { font-size: 17px; font-weight: 600; margin: -2px 0 14px; color: var(--text); min-height: 1.6em; }
+  .type-word { color: var(--brand); }
+  .caret { display: inline-block; width: 2px; height: 1.1em; background: var(--brand); margin-left: 2px; vertical-align: -3px; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) {
+    .shine, .wave, .rise, .caret { animation: none !important; }
+  }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 10px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 999px;
+    font-weight: 700; font-size: 14px; text-decoration: none; border: 1px solid transparent;
+  }
+  .btn-primary { background: var(--brand); color: var(--brand-ink); }
+  .btn-ghost { background: var(--surface); border-color: var(--line); }
+  .btn:hover { filter: brightness(.96); }
+
+  .progress-card { text-align: center; min-width: 170px; }
+  .ring { width: 132px; height: 132px; margin: 0 auto 8px; position: relative; }
+  .ring svg { transform: rotate(-90deg); }
+  .ring .num { position: absolute; inset: 0; display: grid; place-items: center; font-size: 28px; font-weight: 800; }
+  .ring .num span { display: block; font-size: 11px; font-weight: 600; color: var(--muted); margin-top: -8px; }
+  .progress-card small { color: var(--muted); font-size: 13px; }
+
+  /* ============ SECTIONS ============ */
+  section { margin-top: 44px; }
+  .sec-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+  .sec-head h2 { font-size: 22px; letter-spacing: -.01em; margin: 0; display: flex; align-items: center; gap: 10px; }
+  .sec-head p { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+  .sec-icon { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand); }
+
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip {
+    padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface);
+    font-size: 13px; font-weight: 600; color: var(--muted);
+  }
+  .chip[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 18px; display: flex; flex-direction: column; gap: 10px; box-shadow: var(--shadow);
+    transition: transform .15s ease, border-color .15s ease;
+  }
+  .card:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--brand) 35%, var(--line)); }
+  .card-top { display: flex; align-items: center; gap: 10px; }
+  .card-ico { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--surface-2); color: var(--text); }
+  .card h3 { font-size: 15.5px; margin: 0; line-height: 1.3; }
+  .card p { margin: 0; color: var(--muted); font-size: 13.5px; flex: 1; }
+  .meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+  .tag { padding: 3px 9px; border-radius: 999px; font-weight: 700; font-size: 11.5px; background: var(--surface-2); color: var(--muted); }
+  .tag.new { background: var(--accent-soft); color: var(--accent); }
+  .tag.soon { background: var(--warn-soft); color: var(--warn); }
+  .tag.must { background: var(--brand-soft); color: var(--brand); }
+  .tag.lock { background: var(--warn-soft); color: var(--warn); text-transform: uppercase; letter-spacing: .05em; }
+  .card-actions { display: flex; gap: 8px; margin-top: 4px; }
+  .link-btn {
+    flex: 1; display: inline-flex; justify-content: center; align-items: center; gap: 6px;
+    padding: 8px 12px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 700;
+    border: 1px solid var(--line); background: var(--surface); text-decoration: none;
+  }
+  .link-btn.solid { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .link-btn[aria-disabled="true"] { opacity: .45; pointer-events: none; }
+
+  /* Video thumbnail for tutorials */
+  .thumb {
+    aspect-ratio: 16/9; border-radius: 12px; background:
+      linear-gradient(135deg, var(--brand-soft), var(--accent-soft));
+    display: grid; place-items: center; color: var(--brand); position: relative; margin: -4px -4px 2px;
+  }
+  .thumb .dur { position: absolute; right: 8px; bottom: 8px; background: rgba(0,0,0,.7); color: #fff; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px; }
+  .play { width: 48px; height: 48px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; box-shadow: var(--shadow); }
+
+  /* ============ FIRST WEEK JOURNEY ============ */
+  .journey { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+  .step {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px;
+    display: flex; gap: 12px; align-items: flex-start; text-align: left; width: 100%;
+  }
+  .step .check {
+    width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--line); display: grid; place-items: center; margin-top: 1px;
+    color: transparent; transition: all .15s;
+  }
+  .step.done { border-color: color-mix(in srgb, var(--ok) 40%, var(--line)); background: var(--ok-soft); }
+  .step.done .check { background: var(--ok); border-color: var(--ok); color: #fff; }
+  .step .when { font-size: 11.5px; font-weight: 700; color: var(--brand); text-transform: uppercase; letter-spacing: .06em; }
+  .step b { display: block; font-size: 14.5px; margin: 2px 0; }
+  .step span.d { font-size: 13px; color: var(--muted); }
+
+  /* ============ REPORT GUIDES (accordion) ============ */
+  .guide { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); margin-bottom: 10px; overflow: hidden; }
+  .guide summary {
+    list-style: none; cursor: pointer; padding: 16px 18px; display: flex; gap: 12px; align-items: center; font-weight: 700;
+  }
+  .guide summary::-webkit-details-marker { display: none; }
+  .guide summary .chev { margin-left: auto; transition: transform .2s; color: var(--muted); }
+  .guide[open] summary .chev { transform: rotate(180deg); }
+  .guide summary small { display: block; font-weight: 500; color: var(--muted); font-size: 13px; }
+  .guide-body { padding: 0 18px 18px 18px; border-top: 1px solid var(--line); }
+  .steps { counter-reset: s; list-style: none; padding: 0; margin: 16px 0 0; display: grid; gap: 12px; }
+  .steps li { counter-increment: s; display: grid; grid-template-columns: 30px 1fr; gap: 12px; align-items: start; }
+  .steps li::before {
+    content: counter(s); width: 28px; height: 28px; border-radius: 50%; background: var(--accent-soft); color: var(--accent);
+    display: grid; place-items: center; font-weight: 800; font-size: 13px;
+  }
+  .steps li b { display: block; font-size: 14px; }
+  .steps li span { color: var(--muted); font-size: 13.5px; }
+  .tip { margin-top: 14px; padding: 12px 14px; border-radius: var(--radius-sm); background: var(--warn-soft); color: var(--text); font-size: 13.5px; }
+  .tip b { color: var(--warn); }
+
+  /* ============ SOCIAL ============ */
+  .social { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+  .soc {
+    display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: var(--radius);
+    background: var(--surface); border: 1px solid var(--line); text-decoration: none; transition: transform .15s;
+  }
+  .soc:hover { transform: translateY(-2px); }
+  .soc .s-ico { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; color: #fff; font-weight: 800; }
+  .soc b { display: block; font-size: 14.5px; }
+  .soc span { font-size: 12.5px; color: var(--muted); }
+
+  /* ============ CONTACTS ============ */
+  .contacts { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+  .person { display: flex; gap: 12px; align-items: center; padding: 14px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+  .avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; font-weight: 800; }
+  .person b { display: block; font-size: 14.5px; }
+  .person span { font-size: 12.5px; color: var(--muted); display: block; }
+  .person a { font-size: 12.5px; color: var(--accent); text-decoration: none; font-weight: 600; }
+
+  .empty { padding: 28px; text-align: center; color: var(--muted); border: 1px dashed var(--line); border-radius: var(--radius); }
+  .hidden { display: none !important; }
+
+  footer { text-align: center; color: var(--muted); font-size: 13px; padding: 30px 16px 40px; border-top: 1px solid var(--line); }
+
+  /* ============ MOBILE ============ */
+  .mobnav { display: none; }
+  @media (max-width: 900px) {
+    .shell { grid-template-columns: 1fr; gap: 0; padding-top: 12px; }
+    .sidenav { display: none; }
+    .mobnav {
+      display: flex; gap: 6px; overflow-x: auto; padding: 10px 16px; border-bottom: 1px solid var(--line);
+      background: var(--surface); position: sticky; top: 65px; z-index: 19; scrollbar-width: none;
+    }
+    .mobnav a { white-space: nowrap; padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: 600; text-decoration: none; color: var(--muted); background: var(--surface-2); }
+    .mobnav a.active { background: var(--brand); color: var(--brand-ink); }
+    html { scroll-padding-top: 120px; }
+  }
+  @media (max-width: 640px) {
+    .hero { grid-template-columns: 1fr; padding: 22px; }
+    .progress-card { display: flex; align-items: center; gap: 14px; text-align: left; }
+    .ring { width: 88px; height: 88px; margin: 0; }
+    .ring .num { font-size: 20px; }
+    .logo small { display: none; }
+    .search input { padding-right: 8px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="logo" href="#top" aria-label="Deli Onboarding Hub home">
+      <img class="logo-mark" src="logo.png" alt="deli">
+      <div>Onboarding Hub<small>Field Force · HQ Team</small></div>
+    </a>
+    <label class="search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="Search tutorials, reports, documents…" aria-label="Search resources">
+    </label>
+    <button class="icon-btn" id="themeBtn" aria-label="Toggle dark mode">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+</header>
+
+<nav class="mobnav" id="mobnav" aria-label="Sections"></nav>
+
+<div class="shell" id="top">
+  <aside class="sidenav" id="sidenav" aria-label="Sections"></aside>
+
+  <main>
+    <!-- HERO -->
+    <div class="hero">
+      <div>
+        <div class="eyebrow" id="greet">Welcome aboard</div>
+        <h1 id="heroTitle" class="rise">Welcome to <span class="shine">Deli Bangladesh</span> <span class="wave" aria-hidden="true">👋</span></h1>
+        <div class="typer rise" aria-live="polite">Let's explore <span id="typeWord" class="type-word"></span><span class="caret" aria-hidden="true"></span></div>
+        <p>Everything you need for your first weeks is on this page: training videos, the reports you will use, how to read them, key documents and our social channels. Start with <b>Your first week</b> below and tick off each step as you go.</p>
+        <div class="btn-row">
+          <a class="btn btn-primary" href="#journey">Start onboarding →</a>
+          <a class="btn btn-ghost" href="#tutorials">Watch tutorials</a>
+        </div>
+      </div>
+      <div class="progress-card">
+        <div class="ring">
+          <svg width="100%" height="100%" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="52" fill="none" stroke="var(--surface-2)" stroke-width="12"/>
+            <circle id="ringBar" cx="60" cy="60" r="52" fill="none" stroke="var(--brand)" stroke-width="12" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7" style="transition: stroke-dashoffset .5s"/>
+          </svg>
+          <div class="num"><div id="pct">0%<span>complete</span></div></div>
+        </div>
+        <small id="pctLabel">0 of 0 steps done</small>
+      </div>
+    </div>
+
+    <!-- SECTIONS get rendered here -->
+    <div id="sections"></div>
+    <div id="noResults" class="empty hidden" style="margin-top:40px">No resources match your search. Try another word.</div>
+  </main>
+</div>
+
+<footer>
+  Deli Stationery · Field Force Onboarding Hub · <span id="updated"></span><br>
+  Something missing or a broken link? Tell your Area Manager.
+</footer>
+
+<script>
+/* =====================================================================
+   CONTENT — edit only this block to add or update resources.
+   Leave url: "" for anything not ready yet; it shows as "Coming soon".
+   ===================================================================== */
+const SITE = {
+  updated: "October 2026",
+  helpContact: { name: "HR / HQ Team", emails: ["shahidul.hr@aci-bd.com", "nawar@aci-bd.com"] },
+};
+
+// 1. Onboarding checklist (progress is saved in the viewer's browser)
+const JOURNEY = [
+  { id: "j1", when: "Day 1", title: "Meet your Area Manager", desc: "Intro call, territory and targets." },
+  { id: "j2", when: "Day 1", title: "Watch 'Welcome to Deli'", desc: "Company story, values and product range." },
+  { id: "j3", when: "Day 2", title: "Product training", desc: "Core stationery and office categories." },
+  { id: "j4", when: "Day 3", title: "Learn the sales app", desc: "Orders, visits and check-ins." },
+  { id: "j5", when: "Day 4", title: "Read your first report", desc: "Follow the report guide below." },
+  { id: "j6", when: "Day 5", title: "Follow our social pages", desc: "Share and promote campaigns." },
+];
+
+// 2. Tutorials (videos / walkthroughs)
+const TUTORIALS = [
+  { title: "Welcome to Deli Stationery", desc: "Who we are, our brands and how Field Force fits in.", category: "Company", duration: "8 min", url: "", must: true },
+  { title: "Product Range Overview", desc: "Pens, paper, office supplies and school range: key SKUs to know.", category: "Product", duration: "15 min", url: "" },
+  { title: "Using the Sales / Order App", desc: "Logging visits, taking orders and syncing data.", category: "Tools", duration: "12 min", url: "", must: true },
+  { title: "Daily Reporting Routine", desc: "What to submit each day and by when.", category: "Tools", duration: "6 min", url: "" },
+];
+
+// 3. Reports (each can link to a guide via guideId)
+const REPORTS = [
+  { title: "Zone · Area · DB SKU Sales (Last 10M)", desc: "Zone, Area & Distributor-wise SKU-level sales for the last 10 months, with stock, COGS and gross profit.", tags: ["SKU Sales", "Zone · Area · DB", "Confidential"], restricted: true, url: "", guideId: "g-sku" },
+  { title: "Stock Intelligence", desc: "Real-time stock and inventory intelligence report: monitor levels, turnover rates and supply chain signals at a glance.", tags: ["Inventory", "Supply Chain", "Stock"], restricted: true, url: "", guideId: "g-stock" },
+  { title: "Product Velocity", desc: "Track product movement speed, demand trends and throughput. Identify your fastest and slowest moving items in real time.", tags: ["Products", "Velocity", "Demand"], restricted: true, url: "", guideId: "g-velocity" },
+  { title: "Distributor Sales Trend", desc: "Track distributor-wise sales performance and trends over time to spot growth areas and underperforming regions.", tags: ["Sales", "Distributors", "Trends"], restricted: true, url: "", guideId: "g-dist" },
+];
+
+// 4. How to navigate reports (step-by-step guides)
+const GUIDES = [
+  // Steps are placeholders until the real navigation steps are shared.
+  { id: "g-sku", title: "How to read Zone · Area · DB SKU Sales", sub: "Guide coming soon", steps: [
+      ["Open the report", "Click 'Enter password' on the report card and sign in with the password from HQ."],
+      ["Steps coming soon", "Detailed navigation steps will be added here."],
+    ] },
+  { id: "g-stock", title: "How to read Stock Intelligence", sub: "Guide coming soon", steps: [
+      ["Open the report", "Click 'Enter password' on the report card and sign in with the password from HQ."],
+      ["Steps coming soon", "Detailed navigation steps will be added here."],
+    ] },
+  { id: "g-velocity", title: "How to read Product Velocity", sub: "Guide coming soon", steps: [
+      ["Open the report", "Click 'Enter password' on the report card and sign in with the password from HQ."],
+      ["Steps coming soon", "Detailed navigation steps will be added here."],
+    ] },
+  { id: "g-dist", title: "How to read Distributor Sales Trend", sub: "Guide coming soon", steps: [
+      ["Open the report", "Click 'Enter password' on the report card and sign in with the password from HQ."],
+      ["Steps coming soon", "Detailed navigation steps will be added here."],
+    ] },
+];
+
+// 5. Documents & policies
+const DOCUMENTS = [
+  { title: "Damage Return Policy", desc: "How to handle, record and return damaged products from the market.", category: "Sales", format: "PDF", url: "", must: true },
+  { title: "Distributor Onboarding", desc: "Steps, documents and requirements to onboard a new distributor.", category: "Sales", format: "PDF", url: "", must: true },
+  { title: "Product Catalogue 2026", desc: "Full SKU list with prices and pack sizes.", category: "Product", format: "PDF", url: "" },
+  { title: "Price List & Schemes", desc: "Current trade prices and running offers.", category: "Sales", format: "Excel", url: "" },
+  { title: "Travel & Expense Policy", desc: "What you can claim and how to submit it.", category: "HR", format: "PDF", url: "" },
+  { title: "Territory & Beat Plan", desc: "Your outlets and weekly visit schedule.", category: "Sales", format: "Excel", url: "" },
+];
+
+// 6. Social media
+const SOCIAL = [
+  { name: "Facebook", handle: "@deli", url: "", color: "#1877F2", letter: "f" },
+  { name: "Instagram", handle: "@deli", url: "", color: "#E1306C", letter: "IG" },
+  { name: "LinkedIn", handle: "Deli Stationery", url: "", color: "#0A66C2", letter: "in" },
+  { name: "YouTube", handle: "Deli Official", url: "", color: "#FF0000", letter: "▶" },
+  { name: "TikTok", handle: "@deli", url: "", color: "#111111", letter: "♪" },
+  { name: "Website", handle: "deli.com", url: "", color: "#555555", letter: "www" },
+];
+
+// 7. Key contacts
+const CONTACTS = [
+  { name: "Area Manager", role: "Your first point of contact", contact: "" },
+  { name: "HR / Training", role: "Onboarding, policies, leave", contact: "" },
+  { name: "Sales Admin", role: "Reports, orders, app access", contact: "" },
+];
+
+/* ===================================================================== */
+/* RENDERING: you normally do not need to edit below this line          */
+/* ===================================================================== */
+const ICONS = {
+  journey: '<path d="M4 20V10l8-6 8 6v10"/><path d="M9 20v-6h6v6"/>',
+  tutorials: '<rect x="3" y="5" width="18" height="14" rx="3"/><path d="m10 9 5 3-5 3z"/>',
+  reports: '<path d="M4 20V4"/><path d="M4 20h16"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/>',
+  guides: '<path d="M4 5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2z"/><path d="M8 7h6M8 11h6"/>',
+  documents: '<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/>',
+  social: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/>',
+  contacts: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+};
+const svg = (k, s = 18) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]}</svg>`;
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const linkAttrs = url => url ? `href="${esc(url)}" target="_blank" rel="noopener"` : `aria-disabled="true" tabindex="-1"`;
+const statusTag = r => r.url ? (r.must ? '<span class="tag must">Must read</span>' : "") : '<span class="tag soon">Coming soon</span>';
+
+const store = {
+  get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+};
+
+const SECTIONS = [
+  { id: "journey", label: "Your first week", desc: "Tick each step as you complete it.", count: JOURNEY.length, render: renderJourney },
+  { id: "tutorials", label: "Tutorials", desc: "Short videos to get you up to speed.", count: TUTORIALS.length, render: () => renderFiltered("tutorials", TUTORIALS, tutorialCard) },
+  { id: "reports", label: "Reports", desc: "The reports you will use day to day.", count: REPORTS.length, render: () => `<div class="grid">${REPORTS.map(reportCard).join("")}</div>` },
+  { id: "guides", label: "Report guides", desc: "Step-by-step: how to navigate each report.", count: GUIDES.length, render: () => GUIDES.map(guideBlock).join("") },
+  { id: "documents", label: "Documents", desc: "Policies, catalogues and reference files.", count: DOCUMENTS.length, render: () => renderFiltered("documents", DOCUMENTS, docCard) },
+  { id: "social", label: "Social media", desc: "Follow, like and share our campaigns.", count: SOCIAL.length, render: () => `<div class="social">${SOCIAL.map(socialCard).join("")}</div>` },
+  { id: "contacts", label: "Who to ask", desc: "People who can help you.", count: CONTACTS.length, render: () => `<div class="contacts">${CONTACTS.map(personCard).join("")}</div>` },
+];
+
+function renderJourney() {
+  const done = store.get("deli-journey", []);
+  return `<div class="journey">${JOURNEY.map(j => `
+    <button class="step ${done.includes(j.id) ? "done" : ""}" data-step="${j.id}" aria-pressed="${done.includes(j.id)}" data-search="${esc((j.title + " " + j.desc).toLowerCase())}">
+      <span class="check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5 9-10"/></svg></span>
+      <span><span class="when">${esc(j.when)}</span><b>${esc(j.title)}</b><span class="d">${esc(j.desc)}</span></span>
+    </button>`).join("")}</div>`;
+}
+
+function renderFiltered(key, items, cardFn) {
+  const cats = ["All", ...new Set(items.map(i => i.category))];
+  return `<div class="chips" data-filter="${key}" style="margin-bottom:14px">${cats.map((c, i) =>
+      `<button class="chip" aria-pressed="${i === 0}" data-cat="${esc(c)}">${esc(c)}</button>`).join("")}</div>
+    <div class="grid" data-grid="${key}">${items.map(cardFn).join("")}</div>`;
+}
+
+function tutorialCard(t) {
+  return `<article class="card" data-cat="${esc(t.category)}" data-search="${esc((t.title + " " + t.desc + " " + t.category).toLowerCase())}">
+    <div class="thumb"><div class="play"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div><span class="dur">${esc(t.duration)}</span></div>
+    <div class="meta"><span class="tag">${esc(t.category)}</span>${statusTag(t)}</div>
+    <h3>${esc(t.title)}</h3><p>${esc(t.desc)}</p>
+    <div class="card-actions"><a class="link-btn solid" ${linkAttrs(t.url)}>Watch</a></div>
+  </article>`;
+}
+
+function reportCard(r) {
+  return `<article class="card" data-search="${esc((r.title + " " + r.desc + " " + r.tags.join(" ")).toLowerCase())}">
+    <div class="card-top"><div class="card-ico">${svg("reports", 20)}</div>
+      <div class="meta">${r.restricted ? '<span class="tag lock">🔒 Restricted</span>' : ""}${statusTag(r)}</div></div>
+    <h3>${esc(r.title)}</h3><p>${esc(r.desc)}</p>
+    <div class="meta">${r.tags.map(t => `<span class="tag">${esc(t)}</span>`).join("")}</div>
+    <div class="card-actions">
+      <a class="link-btn solid" ${linkAttrs(r.url)}>${r.restricted ? "Enter password" : "Open report"}</a>
+      ${r.guideId ? `<a class="link-btn" href="#${r.guideId}" data-open-guide="${r.guideId}">How to read</a>` : ""}
+    </div>
+  </article>`;
+}
+
+function guideBlock(g) {
+  return `<details class="guide" id="${g.id}" data-search="${esc((g.title + " " + g.steps.flat().join(" ")).toLowerCase())}">
+    <summary><span class="sec-icon" style="width:30px;height:30px">${svg("guides", 16)}</span>
+      <span>${esc(g.title)}<small>${esc(g.sub)}</small></span>
+      <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </summary>
+    <div class="guide-body">
+      <ol class="steps">${g.steps.map(([b, s]) => `<li><div><b>${esc(b)}</b><span>${esc(s)}</span></div></li>`).join("")}</ol>
+      ${g.tip ? `<div class="tip"><b>Tip:</b> ${esc(g.tip)}</div>` : ""}
+    </div>
+  </details>`;
+}
+
+function docCard(d) {
+  return `<article class="card" data-cat="${esc(d.category)}" data-search="${esc((d.title + " " + d.desc + " " + d.category).toLowerCase())}">
+    <div class="card-top"><div class="card-ico">${svg("documents", 20)}</div>
+      <div class="meta"><span class="tag">${esc(d.category)}</span><span class="tag">${esc(d.format)}</span>${statusTag(d)}</div></div>
+    <h3>${esc(d.title)}</h3><p>${esc(d.desc)}</p>
+    <div class="card-actions"><a class="link-btn solid" ${linkAttrs(d.url)}>Open</a></div>
+  </article>`;
+}
+
+function socialCard(s) {
+  const inner = `<div class="s-ico" style="background:${esc(s.color)};font-size:${s.letter.length > 2 ? 11 : 15}px">${esc(s.letter)}</div>
+    <div><b>${esc(s.name)}</b><span>${s.url ? esc(s.handle) : "Link coming soon"}</span></div>`;
+  return s.url
+    ? `<a class="soc" ${linkAttrs(s.url)} data-search="${esc(s.name.toLowerCase())}">${inner}</a>`
+    : `<div class="soc" style="opacity:.6" data-search="${esc(s.name.toLowerCase())}">${inner}</div>`;
+}
+
+function personCard(p) {
+  const initials = p.name.split(/\s|\//).filter(Boolean).map(w => w[0]).slice(0, 2).join("").toUpperCase();
+  return `<div class="person" data-search="${esc((p.name + " " + p.role).toLowerCase())}">
+    <div class="avatar">${esc(initials)}</div>
+    <div><b>${esc(p.name)}</b><span>${esc(p.role)}</span>${p.contact ? `<a href="mailto:${esc(p.contact)}">${esc(p.contact)}</a>` : ""}</div>
+  </div>`;
+}
+
+/* ---------- Build page ---------- */
+document.getElementById("sections").innerHTML = SECTIONS.map(s => `
+  <section id="${s.id}" data-section>
+    <div class="sec-head"><div>
+      <h2><span class="sec-icon">${svg(s.id)}</span>${esc(s.label)}</h2><p>${esc(s.desc)}</p>
+    </div></div>
+    ${s.render()}
+  </section>`).join("");
+
+const navHTML = SECTIONS.map(s => `<a href="#${s.id}" data-nav="${s.id}">${svg(s.id, 16)}<span>${esc(s.label)}</span><span class="count">${s.count}</span></a>`).join("");
+document.getElementById("sidenav").innerHTML = navHTML +
+  `<div class="help"><b>Need help?</b>${esc(SITE.helpContact.name)}${SITE.helpContact.emails.map(m =>
+    `<a href="mailto:${esc(m)}">${esc(m)}</a>`).join("")}</div>`;
+document.getElementById("mobnav").innerHTML = SECTIONS.map(s => `<a href="#${s.id}" data-nav="${s.id}">${esc(s.label)}</a>`).join("");
+document.getElementById("updated").textContent = "Last updated " + SITE.updated;
+
+/* ---------- Journey progress ---------- */
+function updateProgress() {
+  const done = store.get("deli-journey", []).filter(id => JOURNEY.some(j => j.id === id));
+  const pct = JOURNEY.length ? Math.round(done.length / JOURNEY.length * 100) : 0;
+  document.getElementById("pct").innerHTML = `${pct}%<span>complete</span>`;
+  document.getElementById("pctLabel").textContent = `${done.length} of ${JOURNEY.length} steps done`;
+  document.getElementById("ringBar").style.strokeDashoffset = 326.7 * (1 - pct / 100);
+}
+document.addEventListener("click", e => {
+  const step = e.target.closest("[data-step]");
+  if (step) {
+    let done = store.get("deli-journey", []);
+    const id = step.dataset.step;
+    done = done.includes(id) ? done.filter(x => x !== id) : [...done, id];
+    store.set("deli-journey", done);
+    step.classList.toggle("done", done.includes(id));
+    step.setAttribute("aria-pressed", done.includes(id));
+    updateProgress();
+  }
+  const chip = e.target.closest(".chip");
+  if (chip) {
+    const wrap = chip.parentElement, key = wrap.dataset.filter, cat = chip.dataset.cat;
+    wrap.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c === chip));
+    document.querySelectorAll(`[data-grid="${key}"] .card`).forEach(card =>
+      card.classList.toggle("hidden", cat !== "All" && card.dataset.cat !== cat));
+  }
+  const g = e.target.closest("[data-open-guide]");
+  if (g) document.getElementById(g.dataset.openGuide).open = true;
+});
+updateProgress();
+
+/* ---------- Search ---------- */
+document.getElementById("q").addEventListener("input", e => {
+  const q = e.target.value.trim().toLowerCase();
+  let any = false;
+  document.querySelectorAll("[data-section]").forEach(sec => {
+    const items = sec.querySelectorAll("[data-search]");
+    let hits = 0;
+    items.forEach(it => {
+      const m = !q || it.dataset.search.includes(q);
+      it.classList.toggle("hidden", !m);
+      if (m) hits++;
+      if (q && m && it.tagName === "DETAILS") it.open = true;
+    });
+    sec.querySelectorAll(".chips").forEach(c => c.classList.toggle("hidden", !!q));
+    sec.classList.toggle("hidden", q && hits === 0);
+    if (hits) any = true;
+  });
+  document.getElementById("noResults").classList.toggle("hidden", any || !q);
+});
+
+/* ---------- Active section highlight ---------- */
+const navLinks = document.querySelectorAll("[data-nav]");
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(en => {
+    if (en.isIntersecting) navLinks.forEach(a => a.classList.toggle("active", a.dataset.nav === en.target.id));
+  });
+}, { rootMargin: "-40% 0px -55% 0px" });
+document.querySelectorAll("[data-section]").forEach(s => obs.observe(s));
+
+/* ---------- Hero: time-based greeting + typing words ---------- */
+(() => {
+  const h = new Date().getHours();
+  document.getElementById("greet").textContent =
+    h < 12 ? "Good morning ☀️" : h < 17 ? "Good afternoon 🌤️" : "Good evening 🌙";
+
+  const words = ["tutorials", "reports", "report guides", "documents", "our social pages"];
+  const el = document.getElementById("typeWord");
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { el.textContent = words.join(", "); return; }
+  let w = 0, i = 0, deleting = false;
+  (function tick() {
+    const word = words[w];
+    i += deleting ? -1 : 1;
+    el.textContent = word.slice(0, i);
+    let delay = deleting ? 45 : 90;
+    if (!deleting && i === word.length) { deleting = true; delay = 1600; }
+    else if (deleting && i === 0) { deleting = false; w = (w + 1) % words.length; delay = 300; }
+    setTimeout(tick, delay);
+  })();
+})();
+
+/* ---------- Theme toggle ---------- */
+const root = document.documentElement;
+const saved = store.get("deli-theme", null);
+if (saved) root.dataset.theme = saved;
+document.getElementById("themeBtn").addEventListener("click", () => {
+  const isDark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  root.dataset.theme = isDark ? "light" : "dark";
+  store.set("deli-theme", root.dataset.theme);
+});
+</script>
+</body>
+</html>
